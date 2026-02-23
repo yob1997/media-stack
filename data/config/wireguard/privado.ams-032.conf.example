@@ -1,0 +1,11 @@
+[Interface]
+PrivateKey = REDACTED
+Address = __WIREGUARD_INTERFACE_CIDR__
+DNS = __WIREGUARD_DNS__
+PostUp = ip rule add to __HOME_LAN_CIDR__ table main
+PostDown = ip rule del to __HOME_LAN_CIDR__ table main
+
+[Peer]
+PublicKey = REDACTED
+AllowedIPs = 0.0.0.0/0
+Endpoint = __VPN_ENDPOINT_HOST_OR_IP__:51820

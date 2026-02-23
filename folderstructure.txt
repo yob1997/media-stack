@@ -1,0 +1,22 @@
+# this is on the root folder
+
+/data
+  /media
+    /movies
+    /tv
+  /downloads
+    /incomplete
+    /complete
+  /config
+    /plex
+    /sonarr
+    /radarr
+    /sabnzbd
+    /qbittorrent
+    /overseerr
+      /overrides
+    /prowlarr
+    /portainer
+    /huntarr
+    /wireguard
+    /wg-easy

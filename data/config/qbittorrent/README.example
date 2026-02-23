@@ -1,0 +1,4 @@
+qBittorrent runtime data directory.
+
+This folder is populated on first container start.
+Do not commit real configs, credentials, or torrent session data.

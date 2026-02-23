@@ -1,0 +1,30 @@
+# Copy to: scripts/service-allowlist.conf
+# Then edit the IPs below and run: ./scripts/apply-service-allowlist.sh
+
+# Source IPs/CIDRs allowed to reach protected service ports.
+# Keep localhost and server LAN IP. Add your desktop and WireGuard client IPs/CIDRs.
+ALLOWED_SOURCES=(
+  "127.0.0.1/32"
+  "__SERVER_LAN_IP__/32"    # mediaserver host
+  "__TRUSTED_DEVICE_IP__/32" # desktop/phone example
+  "10.8.0.0/24"       # WireGuard clients (or replace with single /32 peers)
+)
+
+# TCP ports to protect with the allowlist.
+# Keep UDP 51820 open for WireGuard tunnel handshakes; do not add it here.
+PROTECTED_TCP_PORTS=(
+  "51821" # wg-easy UI
+  "8989"  # sonarr
+  "7878"  # radarr
+  "9696"  # prowlarr
+  "5055"  # overseerr
+  "9705"  # huntarr
+  "8080"  # wireguard helper UI (if used)
+  "8081"  # qbittorrent UI
+)
+
+# Host-network TCP ports (non-Docker-published) to protect.
+# Plex runs in host mode in this stack, so include 32400 if you want LAN allowlisting there too.
+HOST_TCP_PORTS=(
+  # "32400" # plex commented out so the entire LAN network can see the plex server.
+)

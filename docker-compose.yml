@@ -1,0 +1,184 @@
+# Copy `.env.example` to `.env` and set required values before `docker compose up -d`.
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+      - VERSION=docker
+      - ADVERTISE_IP=${PLEX_ADVERTISE_IP:?Set PLEX_ADVERTISE_IP in .env}
+    volumes:
+      - /data/config/plex:/config
+      - /data/media:/data/media
+    restart: unless-stopped
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    network_mode: "service:wireguard"
+    depends_on:
+      - wireguard
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+      - SABNZBD__HOST=0.0.0.0
+      - SABNZBD__HOST_WHITELIST=${SABNZBD_HOST_WHITELIST:?Set SABNZBD_HOST_WHITELIST in .env}
+    volumes:
+      - /data/config/sabnzbd:/config
+      - /data/downloads:/data/downloads
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: "service:wireguard"
+    depends_on:
+      - wireguard
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+      - WEBUI_PORT=8081
+      - TORRENTING_PORT=6881
+    volumes:
+      - /data/config/qbittorrent:/config
+      - /data/downloads:/data/downloads
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+    volumes:
+      - /data/config/sonarr:/config
+      - /data/media/tv:/data/media/tv
+      - /data/downloads:/data/downloads
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+    volumes:
+      - /data/config/radarr:/config
+      - /data/media/movies:/data/media/movies
+      - /data/downloads:/data/downloads
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+    volumes:
+      - /data/config/prowlarr:/config
+    restart: unless-stopped
+
+  overseerr:
+    image: sctx/overseerr:latest
+    # image: lscr.io/linuxserver/overseerr:latest
+    # image: ghcr.io/linuxserver/overseerr:v1.34.0-ls154
+    container_name: overseerr
+    ports:
+      - "5055:5055"
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+    volumes:
+      - /data/config/overseerr:/app/config
+      - /data/config/overseerr/overrides/plextv.js:/app/dist/api/plextv.js:ro
+    restart: unless-stopped
+
+  huntarr:
+    image: huntarr/huntarr:latest
+    container_name: huntarr
+    ports:
+      - "9705:9705"
+    environment:
+      - TZ=${TZ:-Europe/Amsterdam}
+    volumes:
+      - /data/config/huntarr:/config
+    restart: unless-stopped
+
+## WireGuard VPN client for routing traffic of other containers through it. Use with wg-easy for easy management of WireGuard clients.
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Amsterdam}
+      - ALLOWEDIPS=0.0.0.0/0
+    volumes:
+      - /data/config/wireguard/privado.ams-032.conf:/config/wg_confs/wg0.conf
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:latest
+    container_name: wg-easy
+    environment:
+      # Optional:
+      # - PORT=51821
+      # - HOST=0.0.0.0
+      # Allow HTTP access to the Web UI (LAN only). Use a reverse proxy for HTTPS.
+      - INSECURE=true
+      # Optional unattended setup (remove after first start):
+      # - INIT_ENABLED=true
+      # - INIT_USERNAME=
+      # - INIT_PASSWORD=
+      # - INIT_HOST=<public-ip-or-ddns-hostname>
+      # - INIT_PORT=51820
+    volumes:
+      - /data/config/wg-easy:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+      # - NET_RAW # Uncomment if using Podman
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+## Management UI for Docker containers.
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    profiles:
+      - admin
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/config/portainer:/data
+    restart: unless-stopped

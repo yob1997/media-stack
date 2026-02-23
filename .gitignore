@@ -1,0 +1,37 @@
+# data content that should never be tracked
+/data/downloads/
+/data/media/
+
+# local runtime files
+*.log
+*.tmp
+*.swp
+*.bak
+*.pid
+
+# databases and caches
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+
+# secrets and keys
+*.key
+*.pem
+*.crt
+*.p12
+*.kdbx
+*.ovpn
+*.wireguard
+
+# env files (keep examples)
+*.env
+!*.env.example
+
+# macOS/Windows noise
+.DS_Store
+Thumbs.db
+scripts/service-allowlist.conf
