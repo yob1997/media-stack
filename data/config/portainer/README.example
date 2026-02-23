@@ -1,0 +1,4 @@
+Portainer runtime data directory.
+
+This folder is populated by the container at runtime.
+Do not commit Portainer database files or backups with credentials.

@@ -1,22 +1,28 @@
-# this is on the root folder
+# Expected host data layout for this stack.
+# Quick check on the server:
+#   tree -d -L 4 /data
+# Fallback when `tree` is not installed:
+#   find /data -type d | sort
 
 /data
-  /media
-    /movies
-    /tv
-  /downloads
-    /incomplete
-    /complete
-  /config
-    /plex
-    /sonarr
-    /radarr
-    /sabnzbd
-    /qbittorrent
-    /overseerr
-      /overrides
-    /prowlarr
-    /portainer
-    /huntarr
-    /wireguard
-    /wg-easy
+|-- config
+|   |-- huntarr
+|   |-- overseerr
+|   |   `-- overrides
+|   |-- plex
+|   |-- portainer
+|   |-- prowlarr
+|   |-- qbittorrent
+|   |-- radarr
+|   |-- sabnzbd
+|   |-- sonarr
+|   |-- wg-easy
+|   `-- wireguard
+|-- downloads
+|   |-- complete
+|   |   |-- movies
+|   |   `-- tv
+|   `-- incomplete
+`-- media
+    |-- movies
+    `-- tv

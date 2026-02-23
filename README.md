@@ -16,6 +16,7 @@ This repo tracks the Docker Compose stack and a sanitized `/data` layout so it c
 
 ## Restore workflow (fresh machine)
 1. Create the `/data` folders using `folderstructure.txt` (or mirror `data/` from this repo).
+   - Optional verify command: `tree -d -L 4 /data` (fallback: `find /data -type d | sort`).
 2. Create your local environment file:
    - `cp .env.example .env`
    - Edit `.env` and set your LAN/public values (for example `PLEX_ADVERTISE_IP` and `SABNZBD_HOST_WHITELIST`).

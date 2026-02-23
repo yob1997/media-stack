@@ -39,14 +39,14 @@
         "name": "Movies",
         "enabled": true,
         "type": "movie",
-        "lastScan": 1769597700069
+        "lastScan": 1771880700073
       },
       {
         "id": "2",
         "name": "TV Shows",
         "enabled": true,
         "type": "show",
-        "lastScan": 1769597700078
+        "lastScan": 1771880700084
       }
     ],
     "machineId": "__REDACTED__"

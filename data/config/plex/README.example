@@ -1,0 +1,4 @@
+Plex runtime config directory.
+
+This folder is populated by the container at runtime.
+Do not commit real Plex metadata, tokens, or database files.
