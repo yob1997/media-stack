@@ -7,7 +7,9 @@ ALLOWED_SOURCES=(
   "127.0.0.1/32"
   "__SERVER_LAN_IP__/32"    # mediaserver host
   "__TRUSTED_DEVICE_IP__/32" # desktop/phone example
-  "10.8.0.0/24"       # WireGuard clients (or replace with single /32 peers)
+  "10.8.0.0/24"       # All WireGuard clients (or replace with single /32 peers)
+  "10.8.0.X/32"       # WireGuard client replace 'X' with assigned IP
+
 )
 
 # TCP ports to protect with the allowlist.
