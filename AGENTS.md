@@ -1,18 +1,20 @@
 # AGENTS.md
 
 ## What this project is
-This repository is a **sanitized backup** of a Docker Compose media-server stack. It is meant to be safe to share and rebuild from scratch without leaking credentials. Only template configs and directory structure live here.
+This repository is a Docker Compose media-server stack with a documented `/data` folder layout.
+It is safe to share because secrets and runtime app configs are intentionally excluded.
 
 ## What matters most
-- Keep **secrets out of the repo**. Only store `.example` configs under `data/config/**`.
+- Keep **secrets out of the repo**. Do not commit real app config files or credentials.
 - Do **not** add media, downloads, databases, logs, or caches to this repo.
 - Preserve the `/data` layout and volume mappings so the stack can be rebuilt reliably.
 
 ## Key paths
 - Repo root: `/home/yob/media-stack`
 - Host data root (runtime): `/data`
-- Sanitized templates: `/home/yob/media-stack/data/config/**`
 - Data folder layout reference: `/home/yob/media-stack/folderstructure.txt`
+- Full setup guide: `/home/yob/media-stack/INSTALL.md`
+- Overseerr PlexTV override: `/home/yob/media-stack/overrides/overseerr/plextv.js`
 
 ## Stack overview (docker-compose.yml)
 Services and notable behavior:
@@ -21,7 +23,7 @@ Services and notable behavior:
 - `wireguard`: VPN container; config at `/data/config/wireguard/privado.ams-032.conf`.
 - `sonarr`, `radarr`: manage TV/movies; mount `/data/media/*` and `/data/downloads`.
 - `prowlarr`: indexer manager.
-- `overseerr`: requests UI; uses a `plextv.js` override.
+- `overseerr`: requests UI, with PlexTV override mounted from repo.
 - `huntarr`: triggers missing-item searches via Sonarr/Radarr; stores config in `/data/config/huntarr`.
 - `portainer`: docker UI; mounts Docker socket.
 
@@ -36,24 +38,18 @@ Services and notable behavior:
 - Wireguard: `8080` (mapped)
 
 ## Restore workflow (fresh machine)
-1. Create `/data` folders (mirror `data/` or use `folderstructure.txt`).
-2. Copy `*.example` templates to real configs under `/data/config/...` and fill secrets.
-3. Copy the Overseerr override: `/data/config/overseerr/overrides/plextv.js`.
+1. Create `/data` folders (use `folderstructure.txt` or the `mkdir` command in `INSTALL.md`).
+2. Create local `.env` with required values.
+3. Place WireGuard provider config at `/data/config/wireguard/privado.ams-032.conf`.
 4. Start stack:
    ```bash
    cd /home/yob/media-stack
    docker compose up -d
    ```
-
-## Updating sanitized templates
-If you need to refresh templates from a live machine:
-```bash
-/home/yob/media-stack/scripts/sync-configs.sh
-```
-This reads `/data/config` and writes redacted `.example` files under `data/config`.
+5. Follow `/home/yob/media-stack/INSTALL.md` to link Prowlarr, Sonarr/Radarr, download clients, Plex, Overseerr, and Huntarr.
 
 ## Guardrails for changes
-- If adding a new service, include its config templates as `data/config/<service>/*.example`.
+- If adding a new service, update both `docker-compose.yml` and `INSTALL.md` linking steps.
 - Never commit real API keys, tokens, or credentials.
 - Keep volume mappings aligned with `/data` so restores stay consistent.
 

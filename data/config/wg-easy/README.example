@@ -1,4 +1,0 @@
-wg-easy runtime data directory.
-
-This folder will be populated by the container at runtime with WireGuard keys and client configs.
-Do not commit real keys or client configs to this repo.
