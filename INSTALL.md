@@ -6,6 +6,14 @@ This guide builds the stack from `docker-compose.yml` and then links services in
 - Docker Engine
 - Docker Compose plugin (`docker compose`)
 - A Linux host with a `/data` mount (or enough local disk to create `/data`)
+- At least one content source path:
+  - Usenet: provider account + NZB indexer account
+  - Torrents: tracker/indexer account(s) + qBittorrent
+- If you plan to use TorrentLeech, an invite/account is required (private tracker)
+
+Legal/risk note:
+- Torrenting may be illegal in your jurisdiction depending on content.
+- You are responsible for legal compliance and operational/privacy risk.
 
 ## 2. Create Host Folders
 From the repo root:
@@ -28,7 +36,7 @@ tree -d -L 4 /data
 Copy and edit:
 
 ```bash
-cp /home/yob/media-stack/.env.example /home/yob/media-stack/.env
+cp /home/[user]/media-stack/.env.example /home/[user]/media-stack/.env
 ```
 
 Required values:
@@ -43,12 +51,12 @@ Place your WireGuard provider config at:
 ## 5. Overseerr Override
 The PlexTV override is versioned in this repo and auto-mounted by Compose (this was needed for Overseerr to be able to see the Plex watchlist for auto syncing and requesting):
 
-`/home/yob/media-stack/overrides/overseerr/plextv.js`
+`/home/[user]/media-stack/overrides/overseerr/plextv.js`
 
 ## 6. Start The Stack
 
 ```bash
-cd /home/yob/media-stack
+cd /home/[user]/media-stack
 docker compose up -d
 ```
 
@@ -73,17 +81,19 @@ docker compose --profile admin up -d portainer
 ## 8. Link Services Together
 Use this order so each app can discover the next one cleanly.
 
-1. Configure download clients first.
-In SABnzbd and qBittorrent, finish first-run setup and set credentials.
+1. Configure the download clients you will use first.
+- Hybrid mode: configure both SABnzbd and qBittorrent.
+- Torrent-only mode: configure only qBittorrent.
+- Usenet-only mode: configure only SABnzbd.
 
 2. Configure Sonarr and Radarr.
 Set root folders:
 - Sonarr: `/data/media/tv`
 - Radarr: `/data/media/movies`
 
-Add download clients in both:
-- SABnzbd URL: `http://wireguard:8080`
-- qBittorrent URL: `http://wireguard:8081`
+Add only the download clients you use:
+- SABnzbd URL: `http://wireguard:8080` (Usenet)
+- qBittorrent URL: `http://wireguard:8081` (Torrents)
 
 Category suggestion:
 - Sonarr: `tv`
@@ -123,5 +133,5 @@ Use missing-only mode and conservative schedules/rate limits.
 If you use the iptables allowlist helper:
 
 ```bash
-cp /home/yob/media-stack/scripts/service-allowlist.conf.example /home/yob/media-stack/scripts/service-allowlist.conf
+cp /home/[user]/media-stack/scripts/service-allowlist.conf.example /home/[user]/media-stack/scripts/service-allowlist.conf
 ```

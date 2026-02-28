@@ -10,11 +10,11 @@ It is safe to share because secrets and runtime app configs are intentionally ex
 - Preserve the `/data` layout and volume mappings so the stack can be rebuilt reliably.
 
 ## Key paths
-- Repo root: `/home/yob/media-stack`
+- Repo root: `/home/[user]/media-stack`
 - Host data root (runtime): `/data`
-- Data folder layout reference: `/home/yob/media-stack/folderstructure.txt`
-- Full setup guide: `/home/yob/media-stack/INSTALL.md`
-- Overseerr PlexTV override: `/home/yob/media-stack/overrides/overseerr/plextv.js`
+- Data folder layout reference: `/home/[user]/media-stack/folderstructure.txt`
+- Full setup guide: `/home/[user]/media-stack/INSTALL.md`
+- Overseerr PlexTV override: `/home/[user]/media-stack/overrides/overseerr/plextv.js`
 
 ## Stack overview (docker-compose.yml)
 Services and notable behavior:
@@ -40,13 +40,13 @@ Services and notable behavior:
 ## Restore workflow (fresh machine)
 1. Create `/data` folders (use `folderstructure.txt` or the `mkdir` command in `INSTALL.md`).
 2. Create local `.env` with required values.
-3. Place WireGuard provider config at `/data/config/wireguard/privado.ams-032.conf`.
+3. Place WireGuard provider config at `/data/config/wireguard/`.
 4. Start stack:
    ```bash
-   cd /home/yob/media-stack
+   cd /home/[user]/media-stack
    docker compose up -d
    ```
-5. Follow `/home/yob/media-stack/INSTALL.md` to link Prowlarr, Sonarr/Radarr, download clients, Plex, Overseerr, and Huntarr.
+5. Follow `/home/[user]/media-stack/INSTALL.md` to link Prowlarr, Sonarr/Radarr, download clients, Plex, Overseerr, and Huntarr.
 
 ## Guardrails for changes
 - If adding a new service, update both `docker-compose.yml` and `INSTALL.md` linking steps.
